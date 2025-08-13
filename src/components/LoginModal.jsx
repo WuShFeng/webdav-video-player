@@ -2,39 +2,41 @@
 "use client";
 import { useState } from "react";
 import { useWebdavStore } from "@/store/useWebdavStore";
-// import { testWebdavConnection } from '@/lib/webdav';
 
 export default function LoginModal() {
   const { isLoginModalOpen, closeLoginModal, setCredentials } =
     useWebdavStore();
-  const [webdavUrl, setWebdavUrl] = useState("");
+  const [url, setUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   if (!isLoginModalOpen) return null;
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setLoading(true);
-    // const ok = await testWebdavConnection(webdavUrl, username, password);
-    const ok = false;
-    setLoading(false);
-    if (ok) {
-      setCredentials(webdavUrl, username, password);
-    } else {
-      alert("登录失败");
-    }
+    fetch("/api/webdav/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url, username, password }),
+    })
+      .then((res) => res.json())
+      .then(({ success }) => {
+        if (success) setCredentials(url, username, password);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      1
+    <div className="fixed inset-0 bg-white bg-opacity-10 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-sm shadow-lg">
-        <h2 className="text-lg font-bold mb-4">登录 WebDAV</h2>
+        <h2 className="text-lg font-bold mb-4">登录</h2>
         <input
-          placeholder="WebDAV 地址"
-          value={webdavUrl}
-          onChange={(e) => setWebdavUrl(e.target.value)}
+          placeholder="地址"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
           className="border px-3 py-2 rounded w-full mb-2"
         />
         <input

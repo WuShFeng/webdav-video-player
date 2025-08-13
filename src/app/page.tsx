@@ -7,25 +7,33 @@ import { useWebdavStore } from "@/store/useWebdavStore";
 export default function Home() {
   const [url, setUrl] = useState("");
   const [videoSrc, setVideoSrc] = useState("");
-  const { openLoginModal } = useWebdavStore();
+  const { openLoginModal, isLoggedIn, logout } = useWebdavStore();
 
   const handlePlay = () => {
     if (url.trim()) {
       setVideoSrc(url.trim());
     }
   };
-
+  const handleAuthButton = () => {
+    if (isLoggedIn) {
+      logout(); // 登出操作
+    } else {
+      openLoginModal(); // 打开登录弹窗
+    }
+  };
   return (
     <main className="flex flex-col gap-6 w-full max-w-xl mx-auto p-4">
       <LoginModal />
 
       <h1 className="text-2xl font-bold text-gray-800 text-center">Player</h1>
-
       <button
-        onClick={openLoginModal}
-        className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+        onClick={handleAuthButton}
+        className={`px-4 py-2 rounded-lg transition ${isLoggedIn
+          ? "bg-red-500 text-white hover:bg-red-600"
+          : "bg-green-500 text-white hover:bg-green-600"
+          }`}
       >
-        登录
+        {isLoggedIn ? "登出" : "登录"}
       </button>
 
       <input

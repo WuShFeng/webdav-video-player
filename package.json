@@ -12,7 +12,8 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "next": "15.4.6",
-    "zustand": "^5.0.7"
+    "zustand": "^5.0.7",
+    "webdav": "^5.8.0"
   },
   "devDependencies": {
     "typescript": "^5",
