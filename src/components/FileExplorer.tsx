@@ -7,7 +7,7 @@ import { useWebdavClient } from "@/lib/webdavClient";
 interface FileItem {
     basename: string;
     type: "file" | "directory";
-    filename: string;
+    filename: string; // WebDAV 返回的完整路径
 }
 
 export default function FileExplorer() {
@@ -15,7 +15,7 @@ export default function FileExplorer() {
     const router = useRouter();
     const client = useWebdavClient();
 
-    // 取查询参数里的路径，默认 "/"
+    // 当前路径（从 URL query 参数取，默认 "/"）
     const currentPath = searchParams.get("path") || "/";
 
     const [files, setFiles] = useState<FileItem[]>([]);
@@ -40,16 +40,39 @@ export default function FileExplorer() {
 
     if (!client) return <p>请先登录</p>;
 
+    // 点击目录时进入下一级
     const handleClick = (file: FileItem) => {
         if (file.type === "directory") {
-            // 点击目录时，修改 URL 的 query 参数
             router.push(`/?path=${encodeURIComponent(file.filename)}`);
         }
     };
 
+    // 返回上一级
+    const handleGoUp = () => {
+        if (currentPath === "/" || currentPath === "") return; // 已经是根目录
+
+        // 去掉最后一个路径段
+        const parts = currentPath.split("/").filter(Boolean); // 去掉空字符串
+        parts.pop(); // 删除最后一级
+        const parentPath = "/" + parts.join("/");
+
+        router.push(`/?path=${encodeURIComponent(parentPath || "/")}`);
+    };
+
     return (
         <div className="p-4 bg-gray-50 rounded-lg shadow">
-            <h2 className="text-lg font-bold mb-2">当前路径: {currentPath}</h2>
+            <div className="flex items-center justify-between mb-2">
+                <h2 className="text-lg font-bold">当前路径: {currentPath}</h2>
+                {currentPath !== "/" && (
+                    <button
+                        onClick={handleGoUp}
+                        className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                    >
+                        ⬆ 返回上一级
+                    </button>
+                )}
+            </div>
+
             {loading ? (
                 <p>加载中...</p>
             ) : (
