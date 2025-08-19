@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface WebdavState {
-  webdavUrl: string;
+  url: string;
   username: string;
   password: string;
   isLoggedIn: boolean;
@@ -16,7 +16,7 @@ interface WebdavState {
 export const useWebdavStore = create<WebdavState>()(
   persist(
     (set) => ({
-      webdavUrl: "",
+      url: "",
       username: "",
       password: "",
       isLoggedIn: false,
@@ -27,7 +27,7 @@ export const useWebdavStore = create<WebdavState>()(
 
       setCredentials: (url, user, pass) =>
         set({
-          webdavUrl: url,
+          url: url,
           username: user,
           password: pass,
           isLoggedIn: true,
@@ -36,7 +36,7 @@ export const useWebdavStore = create<WebdavState>()(
 
       logout: () =>
         set({
-          webdavUrl: "",
+          url: "",
           username: "",
           password: "",
           isLoggedIn: false,

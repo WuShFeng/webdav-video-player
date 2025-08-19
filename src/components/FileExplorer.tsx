@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useWebdavClient } from "@/lib/webdavClient";
+import { createClient } from "webdav";
+import { useWebdavStore } from "@/store/useWebdavStore";
 
 interface FileItem {
     basename: string;
@@ -13,7 +14,8 @@ interface FileItem {
 export default function FileExplorer() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const client = useWebdavClient();
+    const { url, username, password } = useWebdavStore();
+    const client = createClient(url, { username, password });
 
     const currentPath = searchParams.get("path") || "/";
 
@@ -43,13 +45,24 @@ export default function FileExplorer() {
     }, [client, currentPath, lastPath]);
 
     if (!client) return <p>请先登录</p>;
-
-    // 点击目录进入下一级
     const handleClick = (file: FileItem) => {
         if (file.type === "directory") {
+            // 进入下一级目录
             router.push(`/?path=${encodeURIComponent(file.filename)}`);
+        } else if (file.type === "file") {
+            // 文件下载
+            const urlParams = new URLSearchParams({
+                path: file.filename,
+                url,       // WebDAV URL
+                username,   // 登录用户名
+                password,   // 登录密码
+            });
+
+            // 打开浏览器下载
+            window.open(`/api/webdav/download?${urlParams.toString()}`, "_blank");
         }
     };
+
 
     // 生成面包屑
     const buildBreadcrumbs = () => {
