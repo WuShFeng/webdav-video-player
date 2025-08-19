@@ -51,10 +51,7 @@ export default function FileExplorer() {
       router.push(`/?path=${encodeURIComponent(file.filename)}`);
     } else if (file.type === "file") {
       const urlParams = new URLSearchParams({
-        path: file.filename,
-        url,
-        username,
-        password,
+        path: file.filename
       });
 
       window.open(`/api/webdav/download?${urlParams.toString()}`, "_blank");

@@ -15,9 +15,7 @@
     "zustand": "^5.0.7",
     "webdav": "^5.8.0",
     "axios": "^1.11.0",
-    "cache-manager": "^7.1.1",
-    "cache-manager-ioredis": "^2.1.0",
-    "ioredis": "5.7.0"
+    "cacheable": "^1.10.4"
   },
   "devDependencies": {
     "typescript": "^5",

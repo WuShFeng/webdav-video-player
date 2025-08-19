@@ -1,57 +1,57 @@
 import { NextResponse } from "next/server";
-import { createClient } from "webdav";
+import { createClient, FileStat } from "webdav";
+
+const url = process.env.webdavUrl as string;
+const username = process.env.webdavUsername as string;
+const password = process.env.webdavPassword as string;
+
+const client = createClient(url, { username, password });
 
 export async function GET(request: Request) {
   const urlObj = new URL(request.url);
-  const webdavUrl = urlObj.searchParams.get("url")!;
-  const username = urlObj.searchParams.get("username")!;
-  const password = urlObj.searchParams.get("password")!;
-  const path = urlObj.searchParams.get("path")!;
+  const path = urlObj.searchParams.get("path");
 
-  const client = createClient(webdavUrl, { username, password });
-  const range = request.headers.get("range");
-
-  try {
-    const nodeStream = await client.createReadStream(path, {
-      headers: range ? { Range: range } : undefined,
-    });
-
-    const statResult = await client.stat(path);
-    let size: number;
-    if ("size" in statResult) {
-      size = statResult.size;
-    } else if (
-      "data" in statResult &&
-      Array.isArray(statResult.data) &&
-      statResult.data[0]
-    ) {
-      size = statResult.data[0].size;
-    } else {
-      size = 0;
-    }
-
-    // Node Readable 转 Web ReadableStream
-    const webStream = new ReadableStream({
-      start(controller) {
-        nodeStream.on("data", (chunk) => controller.enqueue(chunk));
-        nodeStream.on("end", () => controller.close());
-        nodeStream.on("error", (err) => controller.error(err));
-      },
-    });
-
-    const headers: Record<string, string> = {
-      "Content-Type": "application/octet-stream",
-      "Accept-Ranges": "bytes",
-      "Content-Disposition": `attachment; filename="${path.split("/").pop()}"`,
-      "Content-Length": size.toString(),
-    };
-    if (range) headers["Content-Range"] = range;
-
-    return new Response(webStream, { headers, status: range ? 206 : 200 });
-  } catch (err) {
-    return NextResponse.json(
-      { error: err instanceof Error ? err.message : err },
-      { status: 500 }
-    );
+  if (!path) {
+    return NextResponse.json({ error: "Missing path" }, { status: 400 });
   }
+
+  // 获取文件信息
+  const stat = await client.stat(path);
+  const fileSize = (stat as FileStat).size;
+
+  const rangeHeader = request.headers.get("range");
+  let start = 0;
+  let end = fileSize - 1;
+  let status = 200;
+
+  if (rangeHeader) {
+    const match = rangeHeader.match(/bytes=(\d*)-(\d*)/);
+    if (match) {
+      if (match[1]) start = parseInt(match[1]);
+      if (match[2]) end = parseInt(match[2]);
+    }
+    status = 206; // Partial Content
+  }
+
+  const stream = client.createReadStream(path, { range: { start, end } });
+
+  const headers = new Headers();
+  headers.set("Content-Length", (end - start + 1).toString());
+  headers.set("Accept-Ranges", "bytes");
+  headers.set("Content-Type", "application/octet-stream");
+  headers.set("Content-Range", `bytes ${start}-${end}/${fileSize}`);
+
+  console.log(headers);
+  const webStream = new ReadableStream({
+    async start(controller) {
+      stream.on("data", (chunk) => controller.enqueue(chunk));
+      stream.on("end", () => controller.close());
+      stream.on("error", (err) => controller.error(err));
+    },
+    async cancel() {
+      stream.destroy();
+    },
+  });
+
+  return new NextResponse(webStream, { status, headers });
 }
