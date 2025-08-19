@@ -13,7 +13,11 @@
     "react-dom": "19.1.0",
     "next": "15.4.6",
     "zustand": "^5.0.7",
-    "webdav": "^5.8.0"
+    "webdav": "^5.8.0",
+    "axios": "^1.11.0",
+    "cache-manager": "^7.1.1",
+    "cache-manager-ioredis": "^2.1.0",
+    "ioredis": "5.7.0"
   },
   "devDependencies": {
     "typescript": "^5",

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "webdav";
-import { Readable } from "stream";
 
 export async function GET(request: Request) {
   const urlObj = new URL(request.url);
