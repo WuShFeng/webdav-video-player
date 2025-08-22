@@ -9,7 +9,7 @@ enum Status {
   error,
 }
 interface UserInfo {
-  username?: string;
+  name?: string;
   picture?: string;
 }
 export default function Page() {
@@ -36,9 +36,9 @@ export default function Page() {
         }
       })
       .then((res) => {
-        const { username, picture } = res as UserInfo;
+        const { name, picture } = res as UserInfo;
         setUserProfile({
-          userName: username || "",
+          userName: name || "",
           userPicture: picture || "",
         });
         const path = redirectPath || "/";
