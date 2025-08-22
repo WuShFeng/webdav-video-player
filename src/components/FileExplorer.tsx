@@ -47,18 +47,6 @@ export default function FileExplorer() {
   }, [currentPath, fetchFiles]);
 
   if (!client) return <p>请先登录</p>;
-  const handleClick = (file: FileItem) => {
-    if (file.type === "directory") {
-      router.push(`/?path=${encodeURIComponent(file.filename)}`);
-    } else if (file.type === "file") {
-      const urlParams = new URLSearchParams({
-        path: file.filename,
-      });
-
-      window.open(`/api/webdav/download?${urlParams.toString()}`, "_blank");
-    }
-  };
-
   return (
     <div className="p-4 bg-gray-50 rounded-lg shadow">
       <Breadcrumbs currentPath={currentPath} />
@@ -78,7 +66,9 @@ export default function FileExplorer() {
               className={`flex items-center gap-2 cursor-pointer ${
                 f.type === "directory" ? "text-blue-600 hover:underline" : ""
               }`}
-              onClick={() => handleClick(f)}
+              onClick={() => {
+                router.push(`/?path=${encodeURIComponent(f.filename)}`);
+              }}
             >
               {f.type === "directory" ? "📁" : "📄"} {f.basename}
             </li>

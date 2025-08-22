@@ -73,7 +73,11 @@ export default function FileDetailSidebar({ onClose }: FileDetailSidebarProps) {
             <>
               <p>
                 <span className="font-semibold">大小：</span>
-                {(detail.size / 1024).toFixed(2)} KB
+                {detail.size < 1024
+                  ? `${detail.size} B`
+                  : detail.size < 1024 * 1024
+                  ? `${(detail.size / 1024).toFixed(2)} KB`
+                  : `${(detail.size / 1024 / 1024).toFixed(2)} MB`}
               </p>
               <p>
                 <span className="font-semibold">修改时间：</span>
