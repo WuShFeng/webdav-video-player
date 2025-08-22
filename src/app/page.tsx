@@ -1,5 +1,6 @@
 "use client";
 
+import FileDetailSidebar from "@/components/FileDetailSidebar";
 import FileExplorer from "@/components/FileExplorer";
 import LoginModal from "@/components/LoginModal";
 import { useWebdavStore } from "@/store/useWebdavStore";
@@ -20,14 +21,16 @@ export default function Home() {
       <h1 className="text-2xl font-bold text-gray-800 text-center">Player</h1>
       <button
         onClick={handleAuthButton}
-        className={`px-4 py-2 rounded-lg transition ${isLoggedIn
-          ? "bg-red-500 text-white hover:bg-red-600"
-          : "bg-green-500 text-white hover:bg-green-600"
-          }`}
+        className={`px-4 py-2 rounded-lg transition ${
+          isLoggedIn
+            ? "bg-red-500 text-white hover:bg-red-600"
+            : "bg-green-500 text-white hover:bg-green-600"
+        }`}
       >
         {isLoggedIn ? "登出" : "登录"}
       </button>
       {isLoggedIn && <FileExplorer />}
+      {isLoggedIn && <FileDetailSidebar />}
     </main>
   );
 }
