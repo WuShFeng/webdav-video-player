@@ -1,0 +1,9 @@
+services:
+  ffmpeg:
+    build: ./ffmpeg
+    volumes:
+      - /dev/dri:/dev/dri
+
+
+
+
