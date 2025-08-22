@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Color_Emoji, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import NavigationBar from "@/components/NavigationBar";
+import RightSidebar from "@/components/RightSidebar";
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -29,7 +30,10 @@ export default function RootLayout({
         className={`${jetBrainsMono.variable} ${notoColorEmoji.variable} antialiased`}
       >
         <NavigationBar />
-        {children}
+        <div className="flex w-full">
+          {children}
+          <RightSidebar />
+        </div>
       </body>
     </html>
   );

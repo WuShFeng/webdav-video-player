@@ -40,7 +40,7 @@ export default function FileDetailSidebar({ onClose }: FileDetailSidebarProps) {
   if (!currentPath) return null;
 
   return (
-    <div className="fixed right-0 top-10 h-full w-80 bg-gray-50 shadow-lg p-4 flex flex-col">
+    <div className="w-80 bg-gray-50 shadow-lg p-4 flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-bold text-lg">文件详情</h2>
         {onClose && (

@@ -1,5 +1,6 @@
 "use client";
 
+import LoginButton from "@/components/LoginButton";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -35,7 +36,8 @@ export default function NavigationBar() {
               </Link>
             </li>
           ))}
-        </ul>
+        </ul>{" "}
+        <LoginButton />
       </div>
     </nav>
   );
