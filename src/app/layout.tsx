@@ -30,9 +30,20 @@ export default function RootLayout({
         className={`${jetBrainsMono.variable} ${notoColorEmoji.variable} antialiased`}
       >
         <NavigationBar />
-        <div className="flex w-full">
-          {children}
-          <RightSidebar />
+        {/* 三列布局 */}
+        <div className="grid grid-cols-[22rem_1fr_22rem] w-full h-[calc(100vh-4rem)]">
+          {/* 左侧列 */}
+          <div className="bg-gray-50 p-4">{/* 可放左侧工具栏或留空 */}</div>
+
+          {/* 中间列 */}
+          <main className="overflow-auto p-4 flex justify-center">
+            <div className="w-full max-w-xl">{children}</div>
+          </main>
+
+          {/* 右侧列 */}
+          <div className="p-4">
+            <RightSidebar />
+          </div>
         </div>
       </body>
     </html>
