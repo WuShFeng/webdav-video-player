@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "webdav";
 import { useWebdavStore } from "@/store/useWebdavStore";
 import axios from "axios";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 interface FileItem {
   basename: string;
@@ -51,48 +52,16 @@ export default function FileExplorer() {
       router.push(`/?path=${encodeURIComponent(file.filename)}`);
     } else if (file.type === "file") {
       const urlParams = new URLSearchParams({
-        path: file.filename
+        path: file.filename,
       });
 
       window.open(`/api/webdav/download?${urlParams.toString()}`, "_blank");
     }
   };
 
-  // 生成面包屑
-  const buildBreadcrumbs = () => {
-    const parts = currentPath.split("/").filter(Boolean);
-    const breadcrumbs = [{ name: "🏠 根目录", path: "/" }];
-
-    let pathAcc = "";
-    for (const part of parts) {
-      pathAcc += "/" + part;
-      breadcrumbs.push({ name: part, path: pathAcc });
-    }
-    return breadcrumbs;
-  };
-
-  const breadcrumbs = buildBreadcrumbs();
-
   return (
     <div className="p-4 bg-gray-50 rounded-lg shadow">
-      {/* 面包屑导航 */}
-      <div className="flex flex-wrap items-center text-sm mb-4">
-        {breadcrumbs.map((bc, index) => (
-          <span key={bc.path} className="flex items-center">
-            <button
-              onClick={() =>
-                router.push(`/?path=${encodeURIComponent(bc.path)}`)
-              }
-              className="text-blue-600 hover:underline"
-            >
-              {bc.name}
-            </button>
-            {index < breadcrumbs.length - 1 && (
-              <span className="mx-1 text-gray-500">{"/"}</span>
-            )}
-          </span>
-        ))}
-      </div>
+      <Breadcrumbs currentPath={currentPath} />
 
       {/* 文件列表或骨架屏 */}
       {loading ? (
