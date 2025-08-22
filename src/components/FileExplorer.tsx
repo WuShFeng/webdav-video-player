@@ -24,6 +24,7 @@ export default function FileExplorer() {
   const [files, setFiles] = useState<FileItem[]>([]);
   const [loading, setLoading] = useState(false);
   const controllerRef = useRef<AbortController | null>(null);
+  const [isSingleFile, setIsSingleFile] = useState(false);
   const fetchFiles = useCallback(async () => {
     setLoading(true);
     controllerRef.current?.abort();
@@ -33,6 +34,7 @@ export default function FileExplorer() {
         signal: controllerRef.current.signal,
       })
       .then((res) => {
+        setIsSingleFile(res.data[0].filename === currentPath);
         setFiles(res.data);
       })
       .catch(() => {
@@ -58,6 +60,20 @@ export default function FileExplorer() {
             <li key={i} className="h-6 bg-gray-300 rounded animate-pulse"></li>
           ))}
         </ul>
+      ) : isSingleFile ? (
+        <>
+          <div> {files[0].basename}</div>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              window.open(
+                "/api/webdav/download?path=" + encodeURI(currentPath)
+              );
+            }}
+          >
+            点击下载
+          </div>
+        </>
       ) : (
         <ul className="space-y-1">
           {files.map((f) => (
