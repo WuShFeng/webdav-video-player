@@ -68,6 +68,10 @@ export default function FileDetailSidebar({ onClose }: FileDetailSidebarProps) {
           <p>
             <span className="font-semibold">类型：</span>
             {detail.type}
+          </p>{" "}
+          <p>
+            <span className="font-semibold">修改时间：</span>
+            {new Date(detail.lastmod).toLocaleString()}
           </p>
           {detail.type === "file" && (
             <>
@@ -78,10 +82,6 @@ export default function FileDetailSidebar({ onClose }: FileDetailSidebarProps) {
                   : detail.size < 1024 * 1024
                   ? `${(detail.size / 1024).toFixed(2)} KB`
                   : `${(detail.size / 1024 / 1024).toFixed(2)} MB`}
-              </p>
-              <p>
-                <span className="font-semibold">修改时间：</span>
-                {new Date(detail.lastmod).toLocaleString()}
               </p>
               <p>
                 <span className="font-semibold">MIME：</span>

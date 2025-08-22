@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { createClient } from "webdav";
-import { useWebdavStore } from "@/store/useWebdavStore";
 import axios from "axios";
 import Breadcrumbs from "@/components/Breadcrumbs";
 
@@ -16,8 +14,6 @@ interface FileItem {
 export default function FileExplorer() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { url, username, password } = useWebdavStore();
-  const client = createClient(url, { username, password });
 
   const currentPath = searchParams.get("path") || "/";
 
@@ -48,7 +44,6 @@ export default function FileExplorer() {
     fetchFiles();
   }, [currentPath, fetchFiles]);
 
-  if (!client) return <p>请先登录</p>;
   return (
     <div className="p-4 bg-gray-50 rounded-lg shadow">
       <Breadcrumbs currentPath={currentPath} />
