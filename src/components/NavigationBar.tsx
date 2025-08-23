@@ -1,7 +1,8 @@
 "use client";
 
 import LoginButton from "@/components/LoginButton";
-import Link from "next/link";
+import UserNavCard from "@/components/UserNavCard";
+import { useUserStore } from "@/store/useUserStore";
 import { usePathname } from "next/navigation";
 
 interface NavigationBar {
@@ -18,26 +19,12 @@ const navItems: NavigationBar[] = [
 
 export default function NavigationBar() {
   const pathname = usePathname();
-
+  const { isLoggedIn } = useUserStore();
   return (
-    <nav className="bg-blue-600 text-white px-4 py-3 shadow-md">
-      <div className="max-w-6xl mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-center text-white">Player</h1>
-        <ul className="flex space-x-6">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`hover:text-yellow-300 ${
-                  pathname === item.href ? "text-yellow-300 font-semibold" : ""
-                }`}
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>{" "}
-        <LoginButton />
+    <nav className="bg-blue-600 text-white px-5 py-3 shadow-md flex items-center sticky">
+      <h1 className="text-2xl font-bold text-center text-white">Player</h1>
+      <div className="ml-auto ">
+        {isLoggedIn ? <UserNavCard /> : <LoginButton />}
       </div>
     </nav>
   );

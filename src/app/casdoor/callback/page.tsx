@@ -13,8 +13,13 @@ interface UserInfo {
   picture?: string;
 }
 export default function Page() {
-  const { redirectPath, clearRedirectPath, setUserTokens, setUserProfile } =
-    useUserStore();
+  const {
+    redirectPath,
+    clearRedirectPath,
+    setUserTokens,
+    setUserProfile,
+    login,
+  } = useUserStore();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<Status>(Status.loading);
   useEffect(() => {
@@ -28,10 +33,10 @@ export default function Page() {
             accessToken: access_token,
             refreshToken: refresh_token,
           });
+          login();
           setStatus(Status.success);
           return sdk.getUserInfo(access_token);
         } else {
-          setStatus(Status.error);
           throw new Error("No access_token");
         }
       })
@@ -49,13 +54,7 @@ export default function Page() {
         console.error(err);
         setStatus(Status.error);
       });
-  }, [
-    clearRedirectPath,
-    redirectPath,
-    searchParams,
-    setUserProfile,
-    setUserTokens,
-  ]);
+  }, []);
 
   return (
     <div className="p-4 text-center">

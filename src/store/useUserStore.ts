@@ -10,20 +10,24 @@ interface UserToken {
   refreshToken: string;
 }
 interface UserState extends UserProfile, UserToken {
+  isLoggedIn: boolean;
   redirectPath: string;
   setUserProfile: (info: UserProfile) => void;
   setRedirectPath: (path: string) => void;
   clearRedirectPath: () => void;
   setUserTokens: (token: UserToken) => void;
+  login: () => void;
 }
 export const useUserStore = create(
   persist<UserState>(
     (set) => ({
+      isLoggedIn: false,
       userName: "",
       userPicture: "",
       accessToken: "",
       refreshToken: "",
       redirectPath: "/",
+      login: () => set({ isLoggedIn: true }),
       setUserProfile: (info) => set(info),
       setRedirectPath: (path) => set({ redirectPath: path }),
       clearRedirectPath: () => set({ redirectPath: "/" }),
