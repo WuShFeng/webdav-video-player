@@ -17,6 +17,7 @@ interface UserState extends UserProfile, UserToken {
   clearRedirectPath: () => void;
   setUserTokens: (token: UserToken) => void;
   login: () => void;
+  logout: () => void;
 }
 export const useUserStore = create(
   persist<UserState>(
@@ -28,6 +29,9 @@ export const useUserStore = create(
       refreshToken: "",
       redirectPath: "/",
       login: () => set({ isLoggedIn: true }),
+      logout: () => {
+        set({ isLoggedIn: false, accessToken: "", refreshToken: "" });
+      },
       setUserProfile: (info) => set(info),
       setRedirectPath: (path) => set({ redirectPath: path }),
       clearRedirectPath: () => set({ redirectPath: "/" }),
