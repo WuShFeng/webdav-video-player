@@ -33,7 +33,7 @@ export default function Breadcrumbs({ currentPath }: BreadcrumbsProps) {
         <span key={bc.path} className="flex items-center">
           <button
             onClick={() => router.push(`/?path=${encodeURIComponent(bc.path)}`)}
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline cursor-pointer"
           >
             {bc.name}
           </button>
