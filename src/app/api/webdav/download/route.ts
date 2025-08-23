@@ -22,26 +22,30 @@ export async function GET(request: Request) {
   let end = fileSize - 1;
   const rangeHeader = request.headers.get("range");
   let status = 200;
-  const stream = client.createReadStream(path, { range: { start, end } });
-  const fileName = path.split("/").pop() || "download";
   const headers = new Headers();
   if (rangeHeader) {
     const match = rangeHeader.match(/bytes=(\d*)-(\d*)/);
     if (match) {
-      if (match[1]) start = parseInt(match[1]);
-      if (match[2]) end = parseInt(match[2]);
-    }
-    if (start >= fileSize || end >= fileSize || start > end) {
-      return new Response(JSON.stringify({ error: "Range Not Satisfiable" }), {
-        status: 416,
-        headers: {
-          "Content-Range": `bytes */${fileSize}`, // 必须告知文件总大小
-        },
-      });
+      if (match[1] && match[2]) {
+        // bytes=100-200
+        start = parseInt(match[1]);
+        end = parseInt(match[2]);
+      } else if (match[1] && !match[2]) {
+        // bytes=100-
+        start = parseInt(match[1]);
+        end = fileSize - 1;
+      } else if (!match[1] && match[2]) {
+        // bytes=-500  (最后500字节)
+        start = fileSize - parseInt(match[2]);
+        end = fileSize - 1;
+      }
     }
     status = 206;
     headers.set("Content-Range", `bytes ${start}-${end}/${fileSize}`);
   }
+  const stream = client.createReadStream(path, { range: { start, end } });
+  const fileName = path.split("/").pop() || "download";
+
   headers.set("Content-Type", "application/octet-stream");
   headers.set(
     "Content-Disposition",
